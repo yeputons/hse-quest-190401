@@ -1,7 +1,12 @@
 import json
+import random
+import urllib.request
+
 from flask import Flask, request, make_response
 
 app = Flask(__name__)
+
+VK_ACCESS_TOKEN = 'dc1449199b76b349361569e33939d63c28a55bd5290afb85b0652599612965b492904ab880dec410aa1af'
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -17,6 +22,17 @@ def hears():
         print('New message content: ', end='')
         print(event['object']['body'])
         print(event['object'])
+
+        random_id = random.randrange(2 ** 32)
+        user_id = event['object']['user_id']
+        answer = "Приветик!"
+        reply_to_user_response = urllib.request.urlopen(
+            f'https://api.vk.com/method/messages.send?random_id={random_id}&user_id={user_id}&message={answer}&access_token={VK_ACCESS_TOKEN}&v=5.90').read()
+        response_object = json.loads(reply_to_user_response)
+        if 'error' in response_object:
+            print('error: we didn\'t answer the user')
+        print(response_object)
+
         return make_response('ok')
 
     print(event)
