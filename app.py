@@ -73,7 +73,10 @@ def send_help(user_id):
 
 def start_send_money(user_id, recipient_id, money_amount):
     t = bot.send_money(user_id, recipient_id, money_amount)
-    next(t)
+    try:
+        next(t)
+    except StopIteration:
+        return
     def finish():
         time.sleep(5)
         try:
