@@ -58,8 +58,11 @@ def ensure_user(user_id):
 
 def send_help(user_id):
     small_id = id_to_small_id(user_id)
-    send_msg(user_id, f'Привет! Отправляйте деньги командой: отправить ID amount, например: send 7 15')
-    send_msg(user_id, f'Ваш ID {small_id}')
+    send_msg(user_id,
+        'Привет! Отправляйте деньги командой:\n'
+        'отправить <номер> <количество монет>\n'
+        'Например: отправить 0 100\n'
+        f'Ваш номер: {small_id}')
 
 
 @app.route("/vk-callback", methods=["GET", "POST"])
