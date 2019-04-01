@@ -46,6 +46,22 @@ def get_user_name(user_id):
     return udata['first_name'] + ' ' + udata['last_name']
 
 
+def ensure_user(user_id):
+    # if user has re-registered
+    if user_id not in SMALL_ID_TO_USER_ID.values():
+        small_id = random.randrange(100)
+        while small_id in SMALL_ID_TO_USER_ID.keys():
+            small_id = random.randrange(100)
+        SMALL_ID_TO_USER_ID[small_id] = user_id
+        USER_ID_TO_NAME[user_id] = get_user_name(user_id)
+
+
+def send_help(user_id):
+    small_id = id_to_small_id(user_id)
+    send_msg(user_id, f'Привет! Отправляйте деньги командой: отправить ID amount, например: send 7 15')
+    send_msg(user_id, f'Ваш ID {small_id}')
+
+
 @app.route("/vk-callback", methods=["GET", "POST"])
 def vk_callback():
     event = json.loads(request.data)
@@ -58,18 +74,8 @@ def vk_callback():
         return make_response('7edcad6c', 200, {"content_type": "application/json"})
 
     if event['type'] == 'message_allow':
-        user_id = event['object']['user_id']
-
-        # if user has re-registered
-        if user_id not in SMALL_ID_TO_USER_ID.values():
-            small_id = random.randrange(100)
-            while small_id in SMALL_ID_TO_USER_ID.keys():
-                small_id = random.randrange(100)
-            SMALL_ID_TO_USER_ID[small_id] = user_id
-            USER_ID_TO_NAME[user_id] = get_user_name(user_id)
-
-        send_msg(user_id, f'Привет! Отправляйте деньги командой: отправить ID amount, например: send 7 15')
-        send_msg(user_id, f'Ваш ID {small_id}')
+        ensure_user(event['object']['user_id'])
+        send_help(event['object']['user_id'])
         return make_response('ok')
 
     if event['type'] == 'message_deny':
@@ -81,6 +87,8 @@ def vk_callback():
         print(f'New message content: {message_content}')
         print(event['object'])
 
+        ensure_user(event['object']['user_id'])
+
         chunks = message_content.split()
 
         if len(chunks) == 3 and chunks[0].lower() == 'отправить':
@@ -91,7 +99,11 @@ def vk_callback():
                 bot.send_money(user_id, recipient_id, money_amount)
             except ValueError:
                 send_msg(user_id, 'Извините, я не понимаю ваш запрос.')
+                send_help(user_id)
                 return make_response('ok')
+        else:
+            send_msg(user_id, 'Извините, я не понимаю ваш запрос.')
+            send_help(user_id)
 
         return make_response('ok')
 
