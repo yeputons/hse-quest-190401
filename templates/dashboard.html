@@ -15,7 +15,7 @@
         </thead>
         <tbody>
             {% for acc in accounts %}
-            <tr>
+            <tr class="{{ 'table-primary' if acc.small_id == max_acc.small_id }}">
                 <td>{{ acc.small_id }}</td>
                 <td>{{ acc.name }}</td>
                 <td>{{ acc.balance }}</td>
