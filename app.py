@@ -1,12 +1,10 @@
 import json
 import random
 import requests
-
+import bot
 from collections import defaultdict
 
 from flask import Flask, request, make_response
-
-
 
 app = Flask(__name__)
 
@@ -24,6 +22,9 @@ USER_ID_TO_MONEY = defaultdict(lambda: 100)
 # def hears2():
 #     pass
 
+def id_to_small_id(user_id):
+    return list(filter(lambda x: x[1] == user_id, SMALL_ID_TO_USER_ID.items()))[0][0]
+
 
 def send_msg(user_id, msg):
     random_id = random.randrange(2 ** 32)
@@ -36,7 +37,7 @@ def send_msg(user_id, msg):
     print(res.status_code, res.json())
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/payment", methods=["GET", "POST"])
 def hears():
     event = json.loads(request.data)
 
@@ -57,7 +58,7 @@ def hears():
                 small_id = random.randrange(100)
             SMALL_ID_TO_USER_ID[small_id] = user_id
 
-        send_msg(user_id, f'Привет! Отправь деньги командой: send ID amount, например: send 7 15')
+        send_msg(user_id, f'Привет! Отправляйте деньги командой: отправить ID amount, например: send 7 15')
         send_msg(user_id, f'Ваш ID {small_id}')
         return make_response('ok')
 
@@ -71,22 +72,16 @@ def hears():
         print(event['object'])
 
         chunks = message_content.split()
-        if len(chunks) == 3 and chunks[0].lower() == 'send':
+
+        if len(chunks) == 3 and chunks[0].lower() == 'отправить':
             try:
                 recipient_small_id = int(chunks[1])
                 recipient_id = SMALL_ID_TO_USER_ID[recipient_small_id]
                 money_amount = int(chunks[2])
+                bot.send_money(user_id, recipient_id, money_amount)
             except ValueError:
-                send_msg(user_id, 'I\'m sorry, I don\'t understand your query')
+                send_msg(user_id, 'Извините, я не понимаю ваш запрос.')
                 return make_response('ok')
-
-        USER_ID_TO_MONEY[user_id] -= money_amount
-        USER_ID_TO_MONEY[recipient_id] += money_amount
-
-        user_small_id = list(filter(lambda x: x[1] == user_id, SMALL_ID_TO_USER_ID.items()))[0]
-
-        send_msg(user_id, f'Done! Your new balance is {USER_ID_TO_MONEY[user_id]}')
-        send_msg(recipient_id, f'You\'ve received {money_amount} money from user f{user_small_id}')
 
         return make_response('ok')
 
