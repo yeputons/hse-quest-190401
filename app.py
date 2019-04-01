@@ -62,7 +62,7 @@ def ensure_user(user_id):
 def send_help(user_id):
     small_id = USER_ID_TO_SMALL_ID[user_id]
     send_msg(user_id,
-        'Привет! Отправляйте деньги командой:\n'
+        'Привет! Отправляйте монетки командой:\n'
         'отправить <номер> <количество монет>\n'
         'Например: отправить 0 100\n'
         f'Ваш номер: {small_id}')
