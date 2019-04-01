@@ -2,6 +2,8 @@ import json
 import random
 import requests
 import bot
+import time
+import threading
 from collections import defaultdict, namedtuple
 
 from flask import Flask, request, make_response, render_template
@@ -66,6 +68,18 @@ def send_help(user_id):
         f'Ваш номер: {small_id}')
 
 
+def start_send_money(user_id, recipient_id, money_amount):
+    t = bot.send_money(user_id, recipient_id, money_amount)
+    next(t)
+    def finish():
+        time.sleep(5)
+        try:
+            next(t)
+        except StopIteration:
+            pass
+    threading.Thread(target=finish).start()
+
+
 @app.route("/vk-callback", methods=["GET", "POST"])
 def vk_callback():
     event = json.loads(request.data)
@@ -102,7 +116,7 @@ def vk_callback():
                 recipient_small_id = int(chunks[1])
                 recipient_id = SMALL_ID_TO_USER_ID[recipient_small_id]
                 money_amount = int(chunks[2])
-                bot.send_money(user_id, recipient_id, money_amount)
+                start_send_money(user_id, recipient_id, money_amount)
             except ValueError:
                 send_msg(user_id, 'Извините, я не понимаю ваш запрос.')
                 send_help(user_id)
