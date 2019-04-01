@@ -65,8 +65,8 @@ def send_help(user_id):
     small_id = USER_ID_TO_SMALL_ID[user_id]
     send_msg(user_id,
         'Привет! Отправляйте монетки командой:\n'
-        'отправить <номер> <количество монет>\n'
-        'Например: отправить 0 100\n'
+        'отправить <количество монет> <номер кому>\n'
+        'Например: отправить 100 0\n'
         f'Ваш номер: {small_id}\n'
         'Ещё можно узнать баланс командой "баланс"')
 
@@ -117,13 +117,13 @@ def vk_callback():
                 send_msg(user_id, f'Ваш баланс: {USER_ID_TO_MONEY[user_id]}')
             elif len(chunks) == 3 and chunks[0].lower() == 'отправить':
                 try:
-                    recipient_small_id = int(chunks[1])
+                    recipient_small_id = int(chunks[2])
                     if recipient_small_id not in SMALL_ID_TO_USER_ID:
                         send_msg(user_id, f'Не знаю пользователя с номером {recipient_small_id}')
                         return make_response('ok')
 
                     recipient_id = SMALL_ID_TO_USER_ID[recipient_small_id]
-                    money_amount = int(chunks[2])
+                    money_amount = int(chunks[1])
                     start_send_money(user_id, recipient_id, money_amount)
                 except ValueError:
                     send_msg(user_id, 'Извините, я не понимаю ваш запрос.')
