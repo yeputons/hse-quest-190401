@@ -95,7 +95,9 @@ def vk_callback():
 
         chunks = message_content.split()
 
-        if len(chunks) == 3 and chunks[0].lower() == 'отправить':
+        if len(chunks) == 1 and chunks[0].lower() == 'баланс':
+            send_msg(user_id, f'Ваш баланс: {USER_ID_TO_MONEY[user_id]}')
+        elif len(chunks) == 3 and chunks[0].lower() == 'отправить':
             try:
                 recipient_small_id = int(chunks[1])
                 recipient_id = SMALL_ID_TO_USER_ID[recipient_small_id]
