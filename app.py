@@ -2,9 +2,9 @@ import json
 import random
 import requests
 import bot
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, render_template
 
 app = Flask(__name__)
 
@@ -86,6 +86,18 @@ def hears():
         return make_response('ok')
 
     print(event)
+
+
+DisplayAccount = namedtuple('DisplayAccount', ['small_id', 'name', 'balance'])
+
+
+@app.route("/")
+def dashboard():
+    accounts = [
+        DisplayAccount(small_id, str(uid), USER_ID_TO_MONEY[uid])
+        for small_id, uid in sorted(SMALL_ID_TO_USER_ID.items())
+    ]
+    return render_template('dashboard.html', accounts=accounts)
 
 
 if __name__ == '__main__':

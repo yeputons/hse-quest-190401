@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Счета{% endblock %}
+{% block head %}
+    <meta http-equiv="refresh" content="3">
+{% endblock %}
+{% block content %}
+    <h1>Открытые счета</h1>
+    <table class="table table-striped thead-light table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>№ участника</th>
+                <th>Имя</th>
+                <th>Монеток</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for acc in accounts %}
+            <tr>
+                <td>{{ acc.small_id }}</td>
+                <td>{{ acc.name }}</td>
+                <td>{{ acc.balance }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
