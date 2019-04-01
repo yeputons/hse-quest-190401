@@ -5,6 +5,7 @@ import bot
 import time
 import threading
 from collections import defaultdict, namedtuple
+import traceback
 
 from flask import Flask, request, make_response, render_template
 
@@ -102,29 +103,33 @@ def vk_callback():
 
     if event['type'] == 'message_new':
         user_id = event['object']['user_id']
-        message_content = event['object']['body']
-        print(f'New message content: {message_content}')
-        print(event['object'])
+        try:
+            message_content = event['object']['body']
+            print(f'New message content: {message_content}')
+            print(event['object'])
 
-        ensure_user(event['object']['user_id'])
+            ensure_user(event['object']['user_id'])
 
-        chunks = message_content.split()
+            chunks = message_content.split()
 
-        if len(chunks) == 1 and chunks[0].lower() == 'баланс':
-            send_msg(user_id, f'Ваш баланс: {USER_ID_TO_MONEY[user_id]}')
-        elif len(chunks) == 3 and chunks[0].lower() == 'отправить':
-            try:
-                recipient_small_id = int(chunks[1])
-                recipient_id = SMALL_ID_TO_USER_ID[recipient_small_id]
-                money_amount = int(chunks[2])
-                start_send_money(user_id, recipient_id, money_amount)
-            except ValueError:
+            if len(chunks) == 1 and chunks[0].lower() == 'баланс':
+                send_msg(user_id, f'Ваш баланс: {USER_ID_TO_MONEY[user_id]}')
+            elif len(chunks) == 3 and chunks[0].lower() == 'отправить':
+                try:
+                    recipient_small_id = int(chunks[1])
+                    recipient_id = SMALL_ID_TO_USER_ID[recipient_small_id]
+                    money_amount = int(chunks[2])
+                    start_send_money(user_id, recipient_id, money_amount)
+                except ValueError:
+                    send_msg(user_id, 'Извините, я не понимаю ваш запрос.')
+                    send_help(user_id)
+                    return make_response('ok')
+            else:
                 send_msg(user_id, 'Извините, я не понимаю ваш запрос.')
                 send_help(user_id)
-                return make_response('ok')
-        else:
-            send_msg(user_id, 'Извините, я не понимаю ваш запрос.')
-            send_help(user_id)
+        except:
+            send_msg(user_id, 'Кажется, я сломался')
+            traceback.print_exc()
 
         return make_response('ok')
 
