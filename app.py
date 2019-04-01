@@ -11,11 +11,15 @@ app = Flask(__name__)
 VK_ACCESS_TOKEN = 'dc1449199b76b349361569e33939d63c28a55bd5290afb85b0652599612965b492904ab880dec410aa1af'
 
 
-SMALL_ID_TO_USER_ID = dict()
-
-SMALL_ID_TO_USER_ID[0] = 85030597
+SMALL_ID_TO_USER_ID = {
+    0: 85030597,
+}
 
 USER_ID_TO_MONEY = defaultdict(lambda: 100)
+
+USER_ID_TO_NAME = {
+    85030597: 'Наташа Мурашкина'
+}
 
 def id_to_small_id(user_id):
     return list(filter(lambda x: x[1] == user_id, SMALL_ID_TO_USER_ID.items()))[0][0]
@@ -30,6 +34,16 @@ def send_msg(user_id, msg):
                          'access_token': VK_ACCESS_TOKEN,
                          'v': '5.90'})
     print(res.status_code, res.json())
+
+
+def get_user_name(user_id):
+    res = requests.get('https://api.vk.com/method/users.get',
+                 params={'user_ids': user_id,
+                         'access_token': VK_ACCESS_TOKEN,
+                         'v': '5.90'})
+    print(res.status_code, res.json())
+    udata = res.json()['response'][0]
+    return udata['first_name'] + ' ' + udata['last_name']
 
 
 @app.route("/vk-callback", methods=["GET", "POST"])
@@ -52,6 +66,7 @@ def vk_callback():
             while small_id in SMALL_ID_TO_USER_ID.keys():
                 small_id = random.randrange(100)
             SMALL_ID_TO_USER_ID[small_id] = user_id
+            USER_ID_TO_NAME[user_id] = get_user_name(user_id)
 
         send_msg(user_id, f'Привет! Отправляйте деньги командой: отправить ID amount, например: send 7 15')
         send_msg(user_id, f'Ваш ID {small_id}')
@@ -89,7 +104,7 @@ DisplayAccount = namedtuple('DisplayAccount', ['small_id', 'name', 'balance'])
 @app.route("/")
 def dashboard():
     accounts = [
-        DisplayAccount(small_id, str(uid), USER_ID_TO_MONEY[uid])
+        DisplayAccount(small_id, USER_ID_TO_NAME[uid], USER_ID_TO_MONEY[uid])
         for small_id, uid in sorted(SMALL_ID_TO_USER_ID.items())
     ]
     return render_template('dashboard.html', accounts=accounts)
