@@ -40,8 +40,8 @@ def vk_callback():
 
     # verify this server's address
     if event['type'] == 'confirmation' and event['group_id'] == 180460328:
-        # find the answer string ('8f05733a') at https://vk.com/club180460328?act=api&server=1
-        return make_response('8f05733a', 200, {"content_type": "application/json"})
+        # find the answer string https://vk.com/club180460328?act=api&server=1
+        return make_response('7edcad6c', 200, {"content_type": "application/json"})
 
     if event['type'] == 'message_allow':
         user_id = event['object']['user_id']
