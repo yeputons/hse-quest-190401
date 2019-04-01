@@ -14,15 +14,15 @@ VK_ACCESS_TOKEN = 'dc1449199b76b349361569e33939d63c28a55bd5290afb85b065259961296
 SMALL_ID_TO_USER_ID = {
     0: 85030597,
 }
+USER_ID_TO_SMALL_ID = {
+    85030597: 0,
+}
 
 USER_ID_TO_MONEY = defaultdict(lambda: 100)
 
 USER_ID_TO_NAME = {
     85030597: 'Наташа Мурашкина'
 }
-
-def id_to_small_id(user_id):
-    return list(filter(lambda x: x[1] == user_id, SMALL_ID_TO_USER_ID.items()))[0][0]
 
 
 def send_msg(user_id, msg):
@@ -53,11 +53,12 @@ def ensure_user(user_id):
         while small_id in SMALL_ID_TO_USER_ID.keys():
             small_id = random.randrange(100)
         SMALL_ID_TO_USER_ID[small_id] = user_id
+        USER_ID_TO_SMALL_ID[user_id] = small_id
         USER_ID_TO_NAME[user_id] = get_user_name(user_id)
 
 
 def send_help(user_id):
-    small_id = id_to_small_id(user_id)
+    small_id = USER_ID_TO_SMALL_ID[user_id]
     send_msg(user_id,
         'Привет! Отправляйте деньги командой:\n'
         'отправить <номер> <количество монет>\n'
