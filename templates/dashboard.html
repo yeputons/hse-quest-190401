@@ -5,6 +5,10 @@
 {% endblock %}
 {% block content %}
     <h1>Открытые счета</h1>
+    <div class="container">
+    <div class="row">
+    {% for accs in [accs1, accs2] %}
+    <div class="col">
     <table class="table table-striped thead-light table-bordered table-hover table-sm">
         <thead>
             <tr>
@@ -14,7 +18,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for acc in accounts %}
+            {% for acc in accs %}
             <tr class="{{ 'table-primary' if acc.small_id == max_acc.small_id }}">
                 <td>{{ acc.small_id }}</td>
                 <td>{{ acc.name }}</td>
@@ -23,4 +27,8 @@
             {% endfor %}
         </tbody>
     </table>
+    </div>
+    {% endfor %}
+    </div>
+    </div>
 {% endblock %}

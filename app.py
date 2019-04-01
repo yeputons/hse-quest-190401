@@ -150,7 +150,9 @@ def dashboard():
         for small_id, uid in sorted(SMALL_ID_TO_USER_ID.items())
     ]
     max_acc = max(accounts, key=lambda acc: acc.balance)
-    return render_template('dashboard.html', accounts=accounts, max_acc=max_acc)
+    accs1 = accounts[:(len(accounts)+1)//2]
+    accs2 = accounts[(len(accounts)+1)//2:]
+    return render_template('dashboard.html', accs1=accs1, accs2=accs2, max_acc=max_acc)
 
 
 if __name__ == '__main__':
