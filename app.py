@@ -117,6 +117,10 @@ def vk_callback():
             elif len(chunks) == 3 and chunks[0].lower() == 'отправить':
                 try:
                     recipient_small_id = int(chunks[1])
+                    if recipient_small_id not in SMALL_ID_TO_USER_ID:
+                        send_msg(user_id, f'Не знаю пользователя с номером {recipient_small_id}')
+                        return make_response('ok')
+
                     recipient_id = SMALL_ID_TO_USER_ID[recipient_small_id]
                     money_amount = int(chunks[2])
                     start_send_money(user_id, recipient_id, money_amount)
