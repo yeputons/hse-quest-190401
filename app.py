@@ -136,7 +136,7 @@ def vk_callback():
                 send_msg(user_id, 'Извините, я не понимаю ваш запрос.')
                 send_help(user_id)
         except:
-            send_msg(user_id, 'Кажется, я сломался')
+            send_msg(user_id, 'Кажется, что-то пошло не так. Попробуйте другой запрос')
             traceback.print_exc()
 
         return make_response('ok')
