@@ -55,9 +55,10 @@ def ensure_user(user_id):
         small_id = random.randrange(100)
         while small_id in SMALL_ID_TO_USER_ID.keys():
             small_id = random.randrange(100)
-        user_name = get_user_name(user_id)
         SMALL_ID_TO_USER_ID[small_id] = user_id
         USER_ID_TO_SMALL_ID[user_id] = small_id
+        USER_ID_TO_NAME[user_id] = 'Кто-то'
+        user_name = get_user_name(user_id)
         USER_ID_TO_NAME[user_id] = user_name
 
 
