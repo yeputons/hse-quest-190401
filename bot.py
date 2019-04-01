@@ -6,7 +6,7 @@ def send_money(src_key, dest_key, amount):
     dest_id = app.USER_ID_TO_SMALL_ID[dest_key]
     src_name = app.USER_ID_TO_NAME[src_key]
     dest_name = app.USER_ID_TO_NAME[dest_key]
-	# ^^^^^^^^^ наверху технический код, скука ^^^^^^^^^
+    # ^^^^^^^^^ наверху технический код, скука ^^^^^^^^^
 
     app.send_msg(src_key,  # Сообщение отправителю
         f'Получен запрос на перевод в {amount} монет.\n'
