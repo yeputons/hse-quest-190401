@@ -17,11 +17,6 @@ SMALL_ID_TO_USER_ID[0] = 85030597
 
 USER_ID_TO_MONEY = defaultdict(lambda: 100)
 
-#
-# @app.route("/money", methods=["GET", "POST"])
-# def hears2():
-#     pass
-
 def id_to_small_id(user_id):
     return list(filter(lambda x: x[1] == user_id, SMALL_ID_TO_USER_ID.items()))[0][0]
 
@@ -37,8 +32,8 @@ def send_msg(user_id, msg):
     print(res.status_code, res.json())
 
 
-@app.route("/payment", methods=["GET", "POST"])
-def hears():
+@app.route("/vk-callback", methods=["GET", "POST"])
+def vk_callback():
     event = json.loads(request.data)
 
     print(event)
