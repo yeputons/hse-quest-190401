@@ -1,21 +1,26 @@
 import app
 
 
-def send_money(user_id, recipient_id, money_amount):
-    money_amount = int(money_amount)
-    app.send_msg(user_id,
-        f'Получен запрос на перевод в {money_amount} монет.\n'
-        f'От кого: {app.USER_ID_TO_SMALL_ID[user_id]} ({app.USER_ID_TO_NAME[user_id]})\n'
-        f'Кому: {app.USER_ID_TO_SMALL_ID[recipient_id]} ({app.USER_ID_TO_NAME[recipient_id]})\n')
+def send_money(src_key, dest_key, amount):
+    src_id = app.USER_ID_TO_SMALL_ID[src_key]
+    dest_id = app.USER_ID_TO_SMALL_ID[dest_key]
+    src_name = app.USER_ID_TO_NAME[src_key]
+    dest_name = app.USER_ID_TO_NAME[dest_key]
+
+    app.send_msg(src_key,
+        f'Получен запрос на перевод в {amount} монет.\n'
+        f'От кого: {src_id} ({src_name})\n'
+        f'Кому: {dest_id} ({dest_name})\n')
 
     yield
 
-    app.USER_ID_TO_MONEY[user_id] -= money_amount
-    app.USER_ID_TO_MONEY[recipient_id] += money_amount
+    app.USER_ID_TO_MONEY[src_key] -= amount
+    app.USER_ID_TO_MONEY[dest_key] += amount
 
-    app.send_msg(user_id,
+    app.send_msg(src_key,
         f'Перевод выполнен!\n'
-        f'Ваш баланс: {app.USER_ID_TO_MONEY[user_id]}')
-    app.send_msg(recipient_id,
-        f'Вы получили {money_amount} монет.\n'
-        f'От кого: {app.USER_ID_TO_SMALL_ID[user_id]} {app.USER_ID_TO_NAME[user_id]}')
+        f'Ваш баланс: {app.USER_ID_TO_MONEY[src_key]}')
+    app.send_msg(dest_key,
+        f'Вы получили {amount} монет.\n'
+        f'От кого: {src_id} {src_name}\n'
+        f'Ваш баланс: {app.USER_ID_TO_MONEY[dest_key]}')
