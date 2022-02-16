@@ -72,8 +72,8 @@ def send_help(user_id):
         'Ещё можно узнать баланс командой "баланс"')
 
 
-def start_send_money(user_id, recipient_id, money_amount):
-    t = bot.send_money(user_id, recipient_id, money_amount)
+def start_send_money(*args, **kwargs):
+    t = bot.send_money(*args, **kwargs)
     try:
         next(t)
     except StopIteration:
