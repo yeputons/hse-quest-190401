@@ -15,16 +15,16 @@ VK_ACCESS_TOKEN = 'dc1449199b76b349361569e33939d63c28a55bd5290afb85b065259961296
 
 
 SMALL_ID_TO_USER_ID = {
-    0: 85030597,
+    0: 2203645,
 }
 USER_ID_TO_SMALL_ID = {
-    85030597: 0,
+    2203645: 0,
 }
 
 USER_ID_TO_MONEY = defaultdict(lambda: 100)
 
 USER_ID_TO_NAME = {
-    85030597: 'Наташа Мурашкина'
+    85030597: 'Егор Суворов'
 }
 
 
